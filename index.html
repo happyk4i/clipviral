@@ -1,0 +1,202 @@
+<!-- TikTok Clipper - Landing Page & Auth Handler -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ClipViral - AI Video Clipper</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --fg: #f2f2f2;
+    --accent: #fe2c55;
+    --accent2: #25f4ee;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --muted: #888;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); min-height:100vh; display:flex; flex-direction:column; }
+  a { color:var(--accent); }
+  
+  nav {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1rem 2rem; border-bottom:1px solid var(--border);
+  }
+  nav .logo { font-weight:700; font-size:1.25rem; }
+  nav .logo span { color:var(--accent2); }
+  nav a { color:var(--muted); text-decoration:none; margin-left:1.5rem; font-size:0.875rem; }
+  nav a:hover { color:var(--fg); }
+
+  main { flex:1; max-width:720px; margin:0 auto; padding:3rem 1.5rem; width:100%; }
+  
+  h1 { font-size:2.5rem; font-weight:800; margin-bottom:0.5rem; }
+  h1 span { color:var(--accent); }
+  p { color:var(--muted); line-height:1.6; margin-bottom:1.5rem; }
+  
+  .hero { text-align:center; margin-bottom:3rem; }
+  .hero p { font-size:1.125rem; }
+
+  .card {
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:2rem; margin-bottom:1.5rem;
+  }
+  .card h2 { margin-bottom:0.75rem; font-size:1.25rem; }
+  .card p { margin-bottom:0.5rem; }
+
+  .callback-box {
+    background:#111; border:2px solid var(--accent); border-radius:12px;
+    padding:2rem; text-align:center; margin-bottom:2rem;
+  }
+  .callback-box h2 { color:var(--accent); margin-bottom:0.5rem; }
+  .callback-box .success { color:#4ade80; }
+  .callback-box .error { color:var(--accent); }
+  .callback-box code {
+    display:block; background:#222; padding:0.5rem; border-radius:6px;
+    font-size:0.75rem; word-break:break-all; margin:1rem 0;
+  }
+
+  .badge {
+    display:inline-block; background:var(--accent); color:#fff; padding:0.25rem 0.75rem;
+    border-radius:999px; font-size:0.75rem; font-weight:600;
+  }
+
+  footer {
+    text-align:center; padding:2rem; border-top:1px solid var(--border);
+    color:var(--muted); font-size:0.75rem;
+  }
+
+  @media(max-width:480px) {
+    nav { flex-direction:column; gap:0.75rem; }
+    nav a { margin:0 0.75rem; }
+    h1 { font-size:1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span>Clip</span>Viral</div>
+  <div>
+    <a href="/">Home</a>
+    <a href="/terms">Terms</a>
+    <a href="/privacy">Privacy</a>
+  </div>
+</nav>
+
+<main>
+  <!-- Home -->
+  <div class="hero" id="home">
+    <span class="badge">AI-Powered</span>
+    <h1>Clip<span>Viral</span></h1>
+    <p>Deteksi hook otomatis dari video panjang — potong, subtitle, posting ke TikTok dalam satu klik.</p>
+  </div>
+
+  <div class="card">
+    <h2>How it works</h2>
+    <p>1. Paste video link → 2. AI detects hook moments (audio + scene + text) → 3. Pick a clip → 4. Post directly to your TikTok.</p>
+    <p>Built with TikTok Content Posting API · Whisper · FFmpeg</p>
+  </div>
+
+  <div class="card">
+    <h2>Connect with TikTok</h2>
+    <p>Authorize your account to start posting clips. Your access token is stored locally and never shared.</p>
+  </div>
+
+  <!-- Callback handler (injected by JS) -->
+  <div id="callback-ui" style="display:none">
+    <div class="callback-box" id="callback-box"></div>
+  </div>
+
+  <!-- Terms of Service → #terms -->
+  <div id="terms" style="display:none">
+    <h1>Terms of Service</h1>
+    <p><em>Last updated: July 2026</em></p>
+    <div class="card">
+      <h2>1. Service</h2>
+      <p>ClipViral ("the Service") is an AI-powered video clipping tool. By using the Service, you agree to these Terms.</p>
+      <h2>2. User Content</h2>
+      <p>You retain all rights to your videos. The Service processes video content only at your explicit request to generate clips.</p>
+      <h2>3. API Usage</h2>
+      <p>The Service uses the TikTok Content Posting API on your behalf. You must comply with TikTok's Terms of Service and Developer Policies.</p>
+      <h2>4. Limitations</h2>
+      <p>The Service is provided "as is" without warranty. We are not responsible for content you choose to post.</p>
+      <h2>5. Contact</h2>
+      <p>Questions about these Terms can be directed to the developer.</p>
+    </div>
+  </div>
+
+  <!-- Privacy Policy → #privacy -->
+  <div id="privacy" style="display:none">
+    <h1>Privacy Policy</h1>
+    <p><em>Last updated: July 2026</em></p>
+    <div class="card">
+      <h2>1. Data Collection</h2>
+      <p>ClipViral collects only the minimum data necessary to operate: your TikTok OAuth tokens (stored locally on your machine), and the video files you explicitly select for processing.</p>
+      <h2>2. TikTok Data</h2>
+      <p>We access your TikTok account only through the OAuth scopes you authorize (<code>user.info.basic</code> and <code>video.upload</code>). No TikTok data is stored on our servers, sold, or shared with third parties.</p>
+      <h2>3. Local Processing</h2>
+      <p>Video processing (audio analysis, transcription, clipping) happens entirely on your local machine. No video content is sent to external servers except the final clip you choose to upload to TikTok via the Content Posting API.</p>
+      <h2>4. Third Parties</h2>
+      <p>We do not use analytics, tracking, or advertising services. The only external service is the TikTok API, which you control through OAuth.</p>
+      <h2>5. Data Retention</h2>
+      <p>OAuth tokens are stored in a local <code>.env</code> file on your machine. You can revoke them at any time via your TikTok Developer settings.</p>
+      <h2>6. Contact</h2>
+      <p>Privacy concerns should be directed to the developer.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ClipViral &mdash; AI Video Clipper &bull; Powered by Hermes Agent
+</footer>
+
+<script>
+(function() {
+  // Routing — show correct section based on path
+  var path = window.location.pathname;
+  var home = document.getElementById('home');
+  var terms = document.getElementById('terms');
+  var privacy = document.getElementById('privacy');
+
+  if (path === '/terms' || path === '/terms/') {
+    terms.style.display = 'block';
+    home.style.display = 'none';
+  } else if (path === '/privacy' || path === '/privacy/') {
+    privacy.style.display = 'block';
+    home.style.display = 'none';
+  }
+
+  // OAuth callback handler — /callback
+  if (path === '/callback' || path === '/callback/') {
+    home.innerHTML = ''; // clear hero
+    var cb = document.getElementById('callback-ui');
+    cb.style.display = 'block';
+    var box = document.getElementById('callback-box');
+
+    var params = new URLSearchParams(window.location.search);
+    var code = params.get('code');
+    var err = params.get('error');
+
+    if (err) {
+      box.innerHTML = '<h2 class="error">Authorization failed</h2><p>Error: ' + err + '</p>';
+    } else if (code) {
+      // Forward the code to our local auth server
+      box.innerHTML = '<p>Authorizing...</p>';
+      fetch('/exchange?code=' + encodeURIComponent(code))
+        .then(function(r) { return r.text(); })
+        .then(function(t) {
+          box.innerHTML = '<h2 class="success">Got authorization code!</h2><p>Send this back to the developer:</p><code>' + code + '</code>';
+        })
+        .catch(function() {
+          box.innerHTML = '<h2 class="success">Authorization code received!</h2><p>Copy this code and send it to the developer:</p><code>' + code + '</code><p style="margin-top:1rem;font-size:0.8rem;">(Local server is offline — that\'s okay, just paste the code back into the chat)</p>';
+        });
+    } else {
+      box.innerHTML = '<h2 class="error">No authorization code found.</h2>';
+    }
+  }
+})();
+</script>
+</body>
+</html>

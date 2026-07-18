@@ -1,0 +1,8 @@
+{
+  "name": "clipviral",
+  "version": "1.0.0",
+  "description": "ClipViral - AI Social Video Clipper (TikTok OAuth Host)",
+  "scripts": {
+    "dev": "servestatic ."
+  }
+}
